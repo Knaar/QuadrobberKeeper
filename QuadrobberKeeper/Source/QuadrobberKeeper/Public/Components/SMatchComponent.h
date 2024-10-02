@@ -46,4 +46,7 @@ public:
 	void DisplayScores() const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(BlueprintCallable, Category = "Score")
+	AActor* GetChampionDogOrNullIfTie() const;
 };

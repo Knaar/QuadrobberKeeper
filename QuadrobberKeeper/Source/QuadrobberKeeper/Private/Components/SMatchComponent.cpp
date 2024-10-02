@@ -98,3 +98,33 @@ void USMatchComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
+AActor* USMatchComponent::GetChampionDogOrNullIfTie() const
+{
+	const FDogScore* ChampionDog = nullptr;
+	bool bIsTie = false;
+
+	// Перебираем все собаки, чтобы найти собаку с максимальным счётом
+	for (const FDogScore& DogScore : DogScoresArray)
+	{
+		// Если еще нет чемпиона, устанавливаем текущую собаку как чемпиона
+		if (!ChampionDog)
+		{
+			ChampionDog = &DogScore;
+			bIsTie = false;
+		}
+		else if (DogScore.Score > ChampionDog->Score)
+		{
+			// Если нашли собаку с бОльшим счётом, обновляем чемпиона
+			ChampionDog = &DogScore;
+			bIsTie = false; // Сбрасываем ничью, так как есть явный лидер
+		}
+		else if (DogScore.Score == ChampionDog->Score)
+		{
+			// Если нашли собаку с таким же счётом, устанавливаем ничью
+			bIsTie = true;
+		}
+	}
+
+	// Если есть ничья, возвращаем nullptr, иначе возвращаем чемпиона
+	return bIsTie ? nullptr : ChampionDog->DogActor;
+}
