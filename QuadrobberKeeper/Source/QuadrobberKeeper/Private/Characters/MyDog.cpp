@@ -7,12 +7,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AMyDog::AMyDog()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 
@@ -47,7 +44,7 @@ void AMyDog::RotateMeshTowardsTarget(UStaticMeshComponent* MeshComp)
 	{
 		TArray<AActor*> FoundedCharacters;
     
-		// Используйте AMyCharacter::StaticClass() для поиска вашего класса
+		
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyCharacter::StaticClass(), FoundedCharacters);
 
 		for (auto Character : FoundedCharacters)
@@ -71,8 +68,7 @@ void AMyDog::RotateMeshTowardsTarget(UStaticMeshComponent* MeshComp)
 		DirectionToTarget.Z = 0;
 		
 		FRotator TargetRotation = DirectionToTarget.Rotation();
-
-	
+		
 		MeshComp->SetWorldRotation(TargetRotation);
 	}
 	
@@ -89,7 +85,7 @@ bool AMyDog::FindDogsAndChaseToy()
 	TArray<AActor*> FoundToys;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ToyClass, FoundToys);
 
-	if (FoundToys.Num() == 0) return false; // Если игрушек нет, завершить выполнение
+	if (FoundToys.Num() == 0) return false; 
 	AActor* ToyActor = FoundToys[0];
 
 	TArray<AActor*> FoundDogs;

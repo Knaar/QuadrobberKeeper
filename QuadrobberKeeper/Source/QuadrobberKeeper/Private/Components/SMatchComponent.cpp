@@ -10,14 +10,11 @@ USMatchComponent::USMatchComponent()
 
 void USMatchComponent::InitializeDogs()
 {
-	// Ищем всех акторов класса AMyDog
 	TArray<AActor*> FoundDogs;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyDog::StaticClass(), FoundDogs);
-
-	// Очищаем массив перед добавлением новых собак (если требуется)
+	
 	DogScoresArray.Empty();
-
-	// Добавляем каждую собаку в массив DogScoresArray со значением очков 0
+	
 	for (AActor* Dog : FoundDogs)
 	{
 		FDogScore NewDogScore;
@@ -46,35 +43,28 @@ AActor* USMatchComponent::GetChampionDog() const
 void USMatchComponent::AddScoreToDog(AActor* Dog, int32 PointsToAdd)
 {
 	if (!Dog) return;
-
-	// Ищем собаку в массиве DogScoresArray
+	
 	for (FDogScore& DogScore : DogScoresArray)
 	{
 		if (DogScore.DogActor == Dog)
 		{
-			// Если нашли, добавляем к её счёту переданное количество очков
 			DogScore.Score += PointsToAdd;
-
-			// Находим текущую собаку-чемпиона
+			
 			AActor* CurrentChampion = GetChampionDog();
 			
-			// Вызов делегата при обновлении счёта
 			OnDogScoreChanged.Broadcast(Dog, DogScore.Score,CurrentChampion);
 
-			return; // Завершаем выполнение после обновления счёта
+			return;
 		}
 	}
-
-	// Если собака не найдена в массиве, добавляем её
+	
 	FDogScore NewDogScore;
 	NewDogScore.DogActor = Dog;
 	NewDogScore.Score = PointsToAdd;
 	DogScoresArray.Add(NewDogScore);
-
-	// Находим текущую собаку-чемпиона
+	
 	AActor* CurrentChampion = GetChampionDog();
 	
-	// Вызов делегата для новой собаки
 	OnDogScoreChanged.Broadcast(Dog, PointsToAdd,CurrentChampion);
 }
 
@@ -86,8 +76,6 @@ void USMatchComponent::DisplayScores() const
 		{
 			FString DogName = DogScore.DogActor->GetName();
 			int32 Score = DogScore.Score;
-
-			// Отображаем в логе имя собаки и её счёт
 			UE_LOG(LogTemp, Log, TEXT("Dog: %s, Score: %d"), *DogName, Score);
 		}
 	}
@@ -102,11 +90,9 @@ AActor* USMatchComponent::GetChampionDogOrNullIfTie() const
 {
 	const FDogScore* ChampionDog = nullptr;
 	bool bIsTie = false;
-
-	// Перебираем все собаки, чтобы найти собаку с максимальным счётом
+	
 	for (const FDogScore& DogScore : DogScoresArray)
 	{
-		// Если еще нет чемпиона, устанавливаем текущую собаку как чемпиона
 		if (!ChampionDog)
 		{
 			ChampionDog = &DogScore;
@@ -114,17 +100,14 @@ AActor* USMatchComponent::GetChampionDogOrNullIfTie() const
 		}
 		else if (DogScore.Score > ChampionDog->Score)
 		{
-			// Если нашли собаку с бОльшим счётом, обновляем чемпиона
 			ChampionDog = &DogScore;
-			bIsTie = false; // Сбрасываем ничью, так как есть явный лидер
+			bIsTie = false;
 		}
 		else if (DogScore.Score == ChampionDog->Score)
 		{
-			// Если нашли собаку с таким же счётом, устанавливаем ничью
 			bIsTie = true;
 		}
 	}
-
-	// Если есть ничья, возвращаем nullptr, иначе возвращаем чемпиона
+	
 	return bIsTie ? nullptr : ChampionDog->DogActor;
 }

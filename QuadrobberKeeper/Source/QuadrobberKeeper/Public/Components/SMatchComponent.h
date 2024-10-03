@@ -18,8 +18,6 @@ struct FDogScore
 	int32 Score;
 };
 
-
-
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class QUADROBBERKEEPER_API USMatchComponent : public UActorComponent
 {
